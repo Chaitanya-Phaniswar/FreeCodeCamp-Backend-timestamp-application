@@ -25,26 +25,39 @@ app.get("/api/hello", function (req, res) {
 });
 
 
-app.get("/api/:date_received",(req,res)=>{
-  const date_received=req.params.date_received;
-  if(!date_received){
-    res.send({
-      "error": "Invalid Date"})
-    return;
+app.get('/api/:date?', (req, res) => {
+  let dateInput = req.params.date;
+
+  // If no date parameter is provided, return the current date
+  if (!dateInput) {
+    const currentDate = new Date();
+    return res.json({
+      unix: currentDate.getTime(),
+      utc: currentDate.toUTCString()
+    });
   }
-  const data={unix: "",date: ""}
-  if(isNaN(date_received)){
-    data["unix"]=Math.floor(new Date(date_received).getTime())
-    data["date"]= new Date(date_received).toUTCString();
-  }else{
-    const date= new Date(date_received*1000/1000);
-    data["unix"]=Math.floor(date.getTime())
-    data["utc"]= date.toUTCString();
+
+  // Check if the dateInput is a number (for Unix timestamp)
+  if (!isNaN(dateInput)) {
+    dateInput = parseInt(dateInput);
   }
-  res.json(data)
-  //console.log(date)
-})
+
+  // Create a date object
+  const date = new Date(dateInput);
+
+  // Check if the date is valid
+  if (date.toString() === "Invalid Date") {
+    return res.json({ error: "Invalid Date" });
+  }
+
+  // If the date is valid, return the unix and utc values
+  return res.json({
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  });
+});
+
 // Listen on port set in environment variable or default to 3000
-var listener = app.listen(process.env.PORT || 3001, function () {
+var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
