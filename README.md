@@ -16,5 +16,12 @@ A microservice that returns the Unix timestamp and UTC time for a given date str
 ```bash
 [project-url]/api
 ```
+##Example Output
+```json
+{
+  "unix": 1451001600000,
+  "utc": "Fri, 25 Dec 2015 00:00:00 GMT"
+}
+```
 
 
